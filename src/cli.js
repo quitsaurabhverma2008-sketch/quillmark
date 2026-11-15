@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+'use strict';
+
+const fs = require('fs');
+const markdown = require('./markdown');
+const render = require('./render');
+
+function printUsage() {
+  process.stdout.write(
+    'Usage: node src/cli.js <input.md> [-o <out.html>] [--title <title>]\n'
+  );
+}
+
+function parseArgs(args) {
+  const options = { input: null, output: null, title: null };
+  let i = 0;
+  while (i < args.length) {
+    const a = args[i];
+    if (a === '-o') {
+      if (i + 1 >= args.length) {
+        return { error: 'Option -o requires a value' };
+      }
+      options.output = args[i + 1];
+      i += 2;
+    } else if (a === '--title') {
+      if (i + 1 >= args.length) {
+        return { error: 'Option --title requires a value' };
+      }
+      options.title = args[i + 1];
+      i += 2;
+    } else if (a === '--help' || a === '-h') {
+      printUsage();
+      process.exit(0);
+    } else if (options.input === null) {
+      options.input = a;
+      i += 1;
+    } else {
+      return { error: 'Unknown argument: ' + a };
+    }
+  }
+  if (!options.input) {
+    return { error: 'Missing input file' };
+  }
+  return options;
+}
+
+function main() {
+  const result = parseArgs(process.argv.slice(2));
+  if (result.error) {
+    process.stderr.write('Error: ' + result.error + '\n');
+    printUsage();
+    process.exit(1);
+  }
+
+  const { input, output, title } = result;
+
+  if (!fs.existsSync(input)) {
+    process.stderr.write('Error: input file not found: ' + input + '\n');
+    process.exit(1);
+  }
+
+  const content = fs.readFileSync(input, 'utf8');
+  const doc = markdown.parse(content);
+  const html = render.render(doc, { title });
+
+  if (output) {
+    fs.writeFileSync(output, html, 'utf8');
+  } else {
+    process.stdout.write(html);
+  }
+  process.exit(0);
+}
+
+main();

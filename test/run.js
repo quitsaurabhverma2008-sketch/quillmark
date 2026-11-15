@@ -1,0 +1,146 @@
+#!/usr/bin/env node
+'use strict';
+
+// Quillmark test suite — dependency-free, CommonJS, Node >= 18.
+const fs = require('fs');
+const { execSync } = require('child_process');
+const { parse, escapeHtml } = require('../src/markdown');
+const { render } = require('../src/render');
+
+let passes = 0;
+let failures = 0;
+
+function assert(condition, name, detail) {
+  if (condition) {
+    passes += 1;
+    process.stdout.write('PASS ' + name + '\n');
+  } else {
+    failures += 1;
+    process.stdout.write('FAIL ' + name + ' — ' + (detail || '') + '\n');
+  }
+}
+
+function childrenText(node) {
+  return (node.children || []).map(c => c.content || '').join('');
+}
+
+// 1. Front matter
+{
+  const { frontMatter, ast } = parse('---\ntitle: Hello\ntags: a, b\n---\n# Hi');
+  assert(frontMatter.title === 'Hello', 'front-matter title');
+  assert(Array.isArray(frontMatter.tags) && frontMatter.tags[0] === 'a' && frontMatter.tags[1] === 'b', 'front-matter tags array');
+  assert(ast.length === 1 && ast[0].type === 'heading' && ast[0].level === 1, 'front-matter heading');
+  assert(childrenText(ast[0]) === 'Hi', 'front-matter heading text');
+}
+
+// 2. No front matter
+{
+  const { frontMatter, ast } = parse('# Just a title');
+  assert(JSON.stringify(frontMatter) === '{}', 'no front-matter empty object');
+  assert(ast.length === 1 && ast[0].type === 'heading', 'no front-matter heading');
+}
+
+// 3. Heading levels
+{
+  for (let lvl = 1; lvl <= 6; lvl++) {
+    const prefix = '#'.repeat(lvl) + ' ';
+    const { ast } = parse(prefix + 'h' + lvl);
+    assert(ast[0] && ast[0].type === 'heading' && ast[0].level === lvl, 'heading level ' + lvl);
+  }
+}
+
+// 4. Paragraph
+{
+  const { ast } = parse('Just text.');
+  assert(ast.length === 1 && ast[0].type === 'paragraph', 'paragraph node');
+  assert(childrenText(ast[0]) === 'Just text.', 'paragraph text');
+}
+
+// 5. Unordered list
+{
+  const { ast } = parse('- a\n- b');
+  assert(ast.length === 1 && ast[0].type === 'ulist', 'ulist node');
+  assert(ast[0].items.length === 2, 'ulist two items');
+  assert(ast[0].items[0].type === 'listItem', 'ulist listItem type');
+  assert(childrenText(ast[0].items[0]) === 'a', 'ulist first item');
+  assert(childrenText(ast[0].items[1]) === 'b', 'ulist second item');
+}
+
+// 6. Ordered list
+{
+  const { ast } = parse('1. a\n2. b');
+  assert(ast.length === 1 && ast[0].type === 'olist', 'olist node');
+  assert(ast[0].items.length === 2, 'olist two items');
+  assert(childrenText(ast[0].items[0]) === 'a', 'olist first item');
+  assert(childrenText(ast[0].items[1]) === 'b', 'olist second item');
+}
+
+// 7. Fenced code block
+{
+  const { ast } = parse('```js\nconst x = 1\n```');
+  assert(ast.length === 1 && ast[0].type === 'codeBlock', 'codeBlock node');
+  assert(ast[0].lang === 'js', 'codeBlock lang js');
+  assert(ast[0].code === 'const x = 1', 'codeBlock code');
+}
+
+// 8. Inline bold
+{
+  const { ast } = parse('**bold**');
+  assert(ast[0].children.length === 1 && ast[0].children[0].type === 'bold', 'bold inline');
+  assert(ast[0].children[0].content === 'bold', 'bold content');
+}
+
+// 9. Inline italic
+{
+  const { ast } = parse('*italic*');
+  assert(ast[0].children.length === 1 && ast[0].children[0].type === 'italic', 'italic inline');
+  assert(ast[0].children[0].content === 'italic', 'italic content');
+}
+
+// 10. Inline code
+{
+  const { ast } = parse('`code`');
+  assert(ast[0].children.length === 1 && ast[0].children[0].type === 'code', 'code inline');
+  assert(ast[0].children[0].content === 'code', 'code content');
+}
+
+// 11. Inline link
+{
+  const { ast } = parse('[text](http://example.com)');
+  assert(ast[0].children.length === 1 && ast[0].children[0].type === 'link', 'link inline');
+  assert(ast[0].children[0].content === 'text', 'link content');
+  assert(ast[0].children[0].href === 'http://example.com', 'link href');
+}
+
+// 12. render() structure
+{
+  const doc = parse('---\ntitle: Hello\n---\n# Hi');
+  const html = render(doc);
+  assert(html.startsWith('<!DOCTYPE html>'), 'render doctype');
+  assert(html.includes('<title>Hello</title>'), 'render title from front matter');
+  assert(html.includes('<style>'), 'render has style');
+  assert(html.includes('<h1>Hi</h1>'), 'render heading');
+}
+
+// 13. render title override
+{
+  const doc = parse('# Hi');
+  const html = render(doc, { title: 'Custom' });
+  assert(html.includes('<title>Custom</title>'), 'render title override');
+}
+
+// 14. CLI
+{
+  const out = require('os').homedir() + '/quillmark-out.html';
+  try {
+    execSync('node src/cli.js site/index.md -o ' + out, { stdio: 'pipe' });
+    const html = fs.readFileSync(out, 'utf8');
+    assert(html.startsWith('<!DOCTYPE html>'), 'cli output doctype');
+    assert(html.includes('<title>Welcome to Quillmark</title>'), 'cli output title');
+  } catch (e) {
+    assert(false, 'cli ran without error', e.message);
+  }
+}
+
+process.stdout.write('\n' + passes + ' passed, ' + failures + ' failed\n');
+process.exit(failures === 0 ? 0 : 1);

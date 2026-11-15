@@ -1,0 +1,18 @@
+[
+  {
+    "id": "4f1726",
+    "text": "Add .gitignore and README.md (optional housekeeping, AGENT-PLAN step 8)",
+    "status": "completed",
+    "priority": "medium",
+    "createdAt": "2026-11-15T10:54:41.730Z",
+    "updatedAt": "2026-11-15T10:55:46.626Z"
+  },
+  {
+    "id": "e9a7d0",
+    "text": "Git init + commit everything (step 13)",
+    "status": "pending",
+    "priority": "high",
+    "createdAt": "2026-11-15T10:55:46.629Z",
+    "updatedAt": "2026-11-15T10:55:46.629Z"
+  }
+]

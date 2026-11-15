@@ -1,0 +1,14 @@
+{
+  "id": "1794740063731-2137",
+  "label": "edit:test/run.js",
+  "ts": "2026-11-15T10:54:23.732Z",
+  "files": [
+    {
+      "path": "test/run.js",
+      "existed": true,
+      "blob": "466049cfaf545900214547888a46e5e0613dea5e90941c22e7ab8cb206431f31",
+      "hash": "466049cfaf545900214547888a46e5e0613dea5e90941c22e7ab8cb206431f31",
+      "size": 4895
+    }
+  ]
+}

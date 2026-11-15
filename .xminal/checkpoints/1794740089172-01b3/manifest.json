@@ -1,0 +1,14 @@
+{
+  "id": "1794740089172-01b3",
+  "label": "write:.gitignore",
+  "ts": "2026-11-15T10:54:49.173Z",
+  "files": [
+    {
+      "path": ".gitignore",
+      "existed": true,
+      "blob": "9c56244ce4ea2afb178aa77cc11b07e2e68cf9705cde335640d3d2f17e1e0bfc",
+      "hash": "9c56244ce4ea2afb178aa77cc11b07e2e68cf9705cde335640d3d2f17e1e0bfc",
+      "size": 60
+    }
+  ]
+}

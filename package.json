@@ -1,0 +1,16 @@
+{
+  "name": "quillmark",
+  "version": "1.0.0",
+  "description": "A dependency-free Markdown -> static-site generator",
+  "type": "commonjs",
+  "main": "src/markdown.js",
+  "bin": {
+    "quillmark": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "node test/run.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

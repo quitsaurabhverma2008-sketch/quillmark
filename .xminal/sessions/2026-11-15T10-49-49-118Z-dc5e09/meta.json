@@ -1,0 +1,11 @@
+{
+  "id": "2026-11-15T10-49-49-118Z-dc5e09",
+  "title": "Build the complete project in this directory. PLAN.md is the spec and AGENT-PLAN",
+  "cwd": "/data/data/com.termux/files/home/xminal-showcase",
+  "model": "groq/openai/gpt-oss-120b",
+  "mode": "full",
+  "agentMode": "yolo",
+  "createdAt": "2026-11-15T10:49:49.152Z",
+  "updatedAt": "2026-11-15T10:55:59.409Z",
+  "messageCount": 111
+}

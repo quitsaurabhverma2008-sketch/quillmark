@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "local": { "command": ["node", "/data/data/com.termux/files/home/xminal/dist/index.js", "mcp", "--serve"] }
+  }
+}
