@@ -2,6 +2,15 @@
 
 A dependency-free Markdown → static-site generator. CommonJS, Node ≥ 18, no dependencies.
 
+> **This project was built by [XMINAL](https://github.com/quitsaurabhverma2008-sketch/xminal) itself.**
+> Every source file, every document, both git commits and the bug fix came out of
+> the agent's own tool calls — 85 of them, across 51 model turns, in **8 m 38 s**,
+> for **$0.007** on a free model.
+>
+> - the agent's own account → [`BUILD-REPORT.md`](BUILD-REPORT.md)
+> - the harness-measured numbers → [`BUILD-MEASUREMENTS.md`](BUILD-MEASUREMENTS.md)
+> - the spec it was given → [`PLAN.md`](PLAN.md) · the plan it wrote → [`AGENT-PLAN.md`](AGENT-PLAN.md)
+
 ## Install
 
 ```sh
