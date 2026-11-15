@@ -1,2 +1,0 @@
-- [2026-11-15] verify command: npm test _(tags: verify, project)_
-- [2026-11-15] Quillmark renderer design decision: src/render.js escapes all HTML text via escapeHtml (tag name, attribute names/values, text content); only whitelisted inline HTML elements (a, em, strong, code, br, img, hr) are passed through with escaped attributes. This prevents XSS from user markdown while allowing common inline formatting. Block-level raw HTML is escaped wholesale. Decision recorded 2026-11-15. _(tags: quillmark, renderer, design-decision, xss)_

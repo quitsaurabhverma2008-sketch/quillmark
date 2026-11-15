@@ -4,3 +4,4 @@ out.html
 dist/
 .quillmark-cache/
 .xminal/
+.xminal-worktrees/
